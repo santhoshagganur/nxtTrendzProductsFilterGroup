@@ -48,3 +48,45 @@
   flex-wrap: wrap;
   padding-left: 0;
 }
+
+.failure-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.failure-view {
+  height: 150px;
+  background-size: cover;
+}
+
+.failure-heading {
+  font-size: 30px;
+  font-weight: bold;
+  color: #0f172a;
+}
+
+.failure-content {
+  font-size: 18px;
+  color: #64748b;
+}
+
+.no-products-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.no-products-view {
+  height: 150px;
+  background-size: cover;
+}
+
+.no-products-heading {
+  font-size: 30px;
+  color: #0f172a;
+  font-weight: bold;
+}
+
+.no-products-content {
+  color: #64748b;
+  font-size: 15px;
+}

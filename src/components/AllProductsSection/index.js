@@ -73,6 +73,7 @@ class AllProductsSection extends Component {
     searchInput: '',
     activeCategoryId: '',
     activeRatingId: '',
+    errorMsg: false,
   }
 
   componentDidMount() {
@@ -115,6 +116,8 @@ class AllProductsSection extends Component {
         productsList: updatedData,
         isLoading: false,
       })
+    } else {
+      this.setState({errorMsg: true})
     }
   }
 
@@ -122,28 +125,66 @@ class AllProductsSection extends Component {
     this.setState({activeOptionId}, this.getProducts)
   }
 
+  renderFailureView = () => (
+    <div className="failure-container">
+      <img
+        src="https://assets.ccbp.in/frontend/react-js/nxt-trendz/nxt-trendz-products-error-view.png"
+        alt="products failure"
+        className="failure-view"
+      />
+      <h1 className="failure-heading"> Oops! Something Went Wrong </h1>
+      <p className="failure-content">
+        We are having some trouble to processing your request. Please try again.
+      </p>
+    </div>
+  )
+
   renderProductsList = () => {
-    const {productsList, activeOptionId} = this.state
+    const {productsList, activeOptionId, errorMsg} = this.state
+
+    if (errorMsg) {
+      this.renderFailureView()
+    }
 
     // TODO: Add No Products View
     return (
-      <div className="all-products-container">
-        <ProductsHeader
-          activeOptionId={activeOptionId}
-          sortbyOptions={sortbyOptions}
-          changeSortby={this.changeSortby}
-        />
-        <ul className="products-list">
-          {productsList.map(product => (
-            <ProductCard productData={product} key={product.id} />
-          ))}
-        </ul>
-      </div>
+      <>
+        {productsList.length === 0 ? (
+          <div className="no-products-container">
+            <img
+              src="https://assets.ccbp.in/frontend/react-js/nxt-trendz/nxt-trendz-no-products-view.png"
+              alt="no products"
+              className="no-products-view"
+            />
+            <h1 className="no-products-heading"> No Products Found </h1>
+            <p className="no-products-content">
+              We could not find any products. Try other filters.
+            </p>
+          </div>
+        ) : (
+          <div className="all-products-container">
+            <ProductsHeader
+              activeOptionId={activeOptionId}
+              sortbyOptions={sortbyOptions}
+              changeSortby={this.changeSortby}
+            />
+            <ul className="products-list">
+              {productsList.map(product => (
+                <ProductCard productData={product} key={product.id} />
+              ))}
+            </ul>
+          </div>
+        )}
+      </>
     )
   }
 
   changeInputResults = newInput => {
-    this.setState({searchInput: newInput}, this.getProducts)
+    this.setState({searchInput: newInput})
+  }
+
+  enterSearchResults = () => {
+    this.getProducts()
   }
 
   changeCategory = category => {
@@ -152,6 +193,17 @@ class AllProductsSection extends Component {
 
   changeRatings = newRatings => {
     this.setState({activeRatingId: newRatings}, this.getProducts)
+  }
+
+  clearFilters = () => {
+    this.setState(
+      {
+        searchInput: '',
+        activeCategoryId: '',
+        activeRatingId: '',
+      },
+      this.getProducts,
+    )
   }
 
   renderLoader = () => (
@@ -181,6 +233,8 @@ class AllProductsSection extends Component {
           changeInputResults={this.changeInputResults}
           changeCategory={this.changeCategory}
           changeRatings={this.changeRatings}
+          enterSearchResults={this.enterSearchResults}
+          clearFilters={this.clearFilters}
         />
 
         {isLoading ? this.renderLoader() : this.renderProductsList()}
