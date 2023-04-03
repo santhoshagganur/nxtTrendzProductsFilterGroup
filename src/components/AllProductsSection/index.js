@@ -70,6 +70,9 @@ class AllProductsSection extends Component {
     productsList: [],
     isLoading: false,
     activeOptionId: sortbyOptions[0].optionId,
+    searchInput: '',
+    activeCategoryId: '',
+    activeRatingId: '',
   }
 
   componentDidMount() {
@@ -84,8 +87,13 @@ class AllProductsSection extends Component {
 
     // TODO: Update the code to get products with filters applied
 
-    const {activeOptionId} = this.state
-    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}`
+    const {
+      activeOptionId,
+      searchInput,
+      activeCategoryId,
+      activeRatingId,
+    } = this.state
+    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${activeCategoryId}&title_search=${searchInput}&rating=${activeRatingId}`
     const options = {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
@@ -134,6 +142,18 @@ class AllProductsSection extends Component {
     )
   }
 
+  changeInputResults = newInput => {
+    this.setState({searchInput: newInput}, this.getProducts)
+  }
+
+  changeCategory = category => {
+    this.setState({activeCategoryId: category}, this.getProducts)
+  }
+
+  changeRatings = newRatings => {
+    this.setState({activeRatingId: newRatings}, this.getProducts)
+  }
+
   renderLoader = () => (
     <div className="products-loader-container">
       <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
@@ -143,14 +163,24 @@ class AllProductsSection extends Component {
   // TODO: Add failure view
 
   render() {
-    const {isLoading} = this.state
-
+    const {
+      isLoading,
+      searchInput,
+      activeCategoryId,
+      activeRatingId,
+    } = this.state
     return (
       <div className="all-products-section">
         {/* TODO: Update the below element */}
         <FiltersGroup
           categoryOptions={categoryOptions}
           ratingsList={ratingsList}
+          searchInput={searchInput}
+          activeCategoryId={activeCategoryId}
+          activeRatingId={activeRatingId}
+          changeInputResults={this.changeInputResults}
+          changeCategory={this.changeCategory}
+          changeRatings={this.changeRatings}
         />
 
         {isLoading ? this.renderLoader() : this.renderProductsList()}
